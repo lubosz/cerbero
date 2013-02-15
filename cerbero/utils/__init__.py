@@ -19,6 +19,7 @@
 import os
 import shutil
 import sys
+import subprocess
 try:
     import sysconfig
 except:
@@ -185,6 +186,9 @@ def system_info():
                 # FIXME Fill this
                 raise FatalError("Distribution OpenSuse '%s' "
                                  "not supported" % str(d))
+        elif "Arch" in subprocess.check_output(["lsb_release", "-i"]):
+            distro = Distro.ARCH
+            distro_version = DistroVersion.ARCH_ROLLING
         else:
             raise FatalError("Distribution '%s' not supported" % str(d))
     elif platform == Platform.WINDOWS:
