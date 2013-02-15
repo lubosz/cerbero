@@ -21,6 +21,7 @@ from cerbero.bootstrap.bootstrapper import register_bootstrapper
 from cerbero.config import Platform, Architecture, Distro, DistroVersion
 from cerbero.utils import shell
 
+import subprocess
 
 class UnixBootstrapper (BootstrapperBase):
 
@@ -110,8 +111,25 @@ class OpenSuseBootstrapper (UnixBootstrapper):
             'perl-XML-Simple', 'gperf', 'gdk-pixbuf-devel', 'wget',
             'docbook-utils', 'glib-networking']
 
+class ArchBootstrapper (UnixBootstrapper):
+
+    tool = 'sudo pacman -S %s --needed'
+    packages = ['intltool', 'cmake', 'doxygen', 'gtk-doc',
+            'libtool', 'bison', 'flex', 'automake', 'autoconf', 'make',
+            'curl', 'gettext', 'alsa-lib', 'yasm', 'gperf',
+            'docbook-xsl', 'transfig', 'libxrender',
+            'libxv', 'mesa', 'python2', 'wget', 'glib-networking']
+
+    def __init__(self, config):
+        UnixBootstrapper.__init__(self, config)
+        if "x86_64" in subprocess.check_output(["uname", "-m"]):
+            self.packages.append('gcc-multilib')
+        else:
+            self.packages.append('gcc')
+
 
 def register_all():
     register_bootstrapper(Distro.DEBIAN, DebianBootstrapper)
     register_bootstrapper(Distro.REDHAT, RedHatBootstrapper)
     register_bootstrapper(Distro.SUSE, OpenSuseBootstrapper)
+    register_bootstrapper(Distro.ARCH, ArchBootstrapper)
