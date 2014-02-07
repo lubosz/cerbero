@@ -4,9 +4,9 @@
 class Recipe(recipe.Recipe):
 
     name = 'gobject-introspection'
-    version = '1.38'
+    version = '1.39'
     remotes = {'origin': 'git://git.gnome.org/gobject-introspection'}
-    commit = 'GOBJECT_INTROSPECTION_1_38_0'
+    commit = 'GOBJECT_INTROSPECTION_1_39_3'
     licenses = [License.GPLv2Plus]
     config_sh = 'sh ./autogen.sh'
     deps = ['glib']
