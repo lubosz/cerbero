@@ -9,7 +9,7 @@ class Recipe(recipe.Recipe):
     commit = 'GOBJECT_INTROSPECTION_1_38_0'
     licenses = [License.GPLv2Plus]
     config_sh = 'sh ./autogen.sh'
-    deps = ['glib', 'cairo', 'fontconfig', 'freetype', 'libxml2'] # some of these are not build deps for gobject-introspection but should be in place in order for it to generate their typelibs?
+    deps = ['glib']
 
     files_bins = ['g-ir-annotation-tool', 'g-ir-compiler', 'g-ir-doc-tool', 'g-ir-generate']
     files_libs = ['libgirepository-1.0']
