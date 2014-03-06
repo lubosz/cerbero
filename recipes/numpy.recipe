@@ -1,0 +1,18 @@
+# -*- Mode: Python -*- vi:si:et:sw=4:sts=4:ts=4:syntax=python
+
+
+class Recipe(recipe.Recipe):
+    name = 'numpy'
+    version = '1.8.0'
+    stype = SourceType.TARBALL
+    url = 'http://downloads.sourceforge.net/project/numpy/NumPy/1.8.0/numpy-1.8.0.tar.gz'
+    licenses = [License.BSD]
+    deps = []
+
+    btype = BuildType.CUSTOM
+    files_python = ['site-packages/numpy/']
+
+    def install(self):
+        shell.call('python setup.py install --prefix=%s --install-lib=%s' %
+                (self.config.prefix, os.path.join(self.config.prefix,
+                 self.config.py_prefix, "site-packages")), self.build_dir)
