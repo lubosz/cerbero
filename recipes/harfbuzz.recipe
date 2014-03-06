@@ -1,0 +1,15 @@
+# -*- Mode: Python -*- vi:si:et:sw=4:sts=4:ts=4:syntax=python
+
+
+class Recipe(recipe.Recipe):
+    name = 'harfbuzz'
+    version = '0.9.24'
+    stype = SourceType.TARBALL
+    url = 'http://www.freedesktop.org/software/harfbuzz/release/harfbuzz-0.9.24.tar.bz2'
+    licenses = [License.LGPLv2Plus]
+    deps = ['fontconfig', 'cairo', 'glib']
+
+    files_bins = ['hb-ot-shape-closure', 'hb-view', 'hb-shape']
+    files_libs = ['libharfbuzz', 'libharfbuzz-icu']
+    files_devel = ['include/harfbuzz',
+        'lib/pkgconfig/harfbuzz.pc', 'lib/pkgconfig/harfbuzz-icu.pc']
