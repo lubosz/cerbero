@@ -41,3 +41,7 @@ class Recipe(recipe.Recipe):
     files_devel = ['include/pygobject-3.0/pygobject.h',
                    'lib/pkgconfig/pygobject-3.0.pc',
                   ]
+
+    def prepare(self):
+        if self.config.target_platform == Platform.LINUX:
+            self.configure_options = '--with-python=python2'
