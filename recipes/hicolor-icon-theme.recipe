@@ -1,0 +1,12 @@
+class Recipe(recipe.Recipe):
+    name = 'hicolor-icon-theme'
+    version = '0.11'
+    licenses = [License.LGPLv2_1]
+
+    stype = SourceType.TARBALL
+    url = 'http://icon-theme.freedesktop.org/releases/hicolor-icon-theme-0.11.tar.gz'
+    deps = ['glib']
+
+    files_misc = ['share/icons/hicolor/']
+
+
