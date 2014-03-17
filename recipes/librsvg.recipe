@@ -5,7 +5,7 @@ class Recipe(recipe.Recipe):
     name = 'librsvg'
     version = '2.40.1'
     licenses = [License.LGPLv2]
-    deps = ['gdk-pixbuf', 'libcroco', 'gtk+3']
+    deps = ['libcroco']
 
     stype = SourceType.TARBALL
     url = 'http://ftp.acc.umu.se/pub/GNOME/sources/librsvg/2.40/librsvg-2.40.1.tar.xz'
