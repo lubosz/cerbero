@@ -14,6 +14,6 @@ class Recipe(recipe.Recipe):
 
     files_libs = ['libclutter-gtk-1.0']
     files_devel = ['include/clutter-gtk-1.0', 'lib/pkgconfig/clutter-gtk-1.0.pc']
-    files_gi = ['lib/girepository-1.0/GtkClutter-1.0.typelib', 'share/gir-1.0/GtkClutter-1.0.gir']
+    files_typelibs = ['GtkClutter-1.0']
 
 
