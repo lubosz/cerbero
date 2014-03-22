@@ -1,0 +1,9 @@
+class Recipe(recipe.Recipe):
+    name = 'shared-mime-info'
+    version = '1.2'
+    licenses = [License.LGPLv2_1]
+
+    stype = SourceType.TARBALL
+    url = 'http://freedesktop.org/~hadess/shared-mime-info-1.2.tar.xz'
+    deps = ['glib', 'libxml2']
+

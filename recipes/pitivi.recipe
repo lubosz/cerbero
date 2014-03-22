@@ -17,7 +17,8 @@ class Recipe(recipe.Recipe):
             'numpy',
             'gnome-themes-standard',
             'gnome-icon-theme',
-            'gnome-icon-theme-symbolic'] # brings in gtk+
+            'gnome-icon-theme-symbolic',
+            'shared-mime-info'] # brings in gtk+
 
     files_bins = ['pitivi']
     files_lang = ['pitivi']
