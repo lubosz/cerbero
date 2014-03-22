@@ -15,7 +15,9 @@ class Recipe(recipe.Recipe):
             'clutter-gtk',
             'clutter-gst',
             'numpy',
-            'gnome-themes-standard'] # brings in gtk+
+            'gnome-themes-standard',
+            'gnome-icon-theme',
+            'gnome-icon-theme-symbolic'] # brings in gtk+
 
     files_bins = ['pitivi']
     files_lang = ['pitivi']

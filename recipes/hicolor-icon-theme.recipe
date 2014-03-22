@@ -8,5 +8,3 @@ class Recipe(recipe.Recipe):
     deps = ['glib']
 
     files_misc = ['share/icons/hicolor/']
-
-
