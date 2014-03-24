@@ -91,7 +91,8 @@ class Config (object):
                    'build_tools_cache', 'home_dir', 'recipes_commits',
                    'ios_platform', 'extra_build_tools',
                    'distro_packages_install', 'interactive',
-                   'target_arch_flags', 'sysroot', 'isysroot']
+                   'target_arch_flags', 'sysroot', 'isysroot',
+                   'package_target_version']
 
     def __init__(self):
         self._check_uninstalled()
@@ -289,6 +290,7 @@ class Config (object):
         self.set_property('target_distro', distro)
         self.set_property('distro_version', distro_version)
         self.set_property('target_distro_version', distro_version)
+        self.set_property('package_target_version', None)
         self.set_property('packages_prefix', None)
         self.set_property('packager', DEFAULT_PACKAGER)
         self.set_property('py_prefix', 'lib/python%s.%s' %

@@ -50,7 +50,7 @@ class DebianBootstrapper (UnixBootstrapper):
                 'libxml-simple-perl', 'dpkg-dev', 'debhelper',
                 'build-essential', 'devscripts', 'fakeroot', 'transfig',
                 'gperf', 'libdbus-glib-1-dev', 'wget', 'glib-networking',
-                'libxtst-dev', 'libxrandr-dev', 'libbonobo2-dev']
+                'libxtst-dev', 'libxrandr-dev', 'libbonobo2-dev', 'chrpath']
     distro_packages = {
         DistroVersion.DEBIAN_SQUEEZE: ['libgtk2.0-dev'],
         DistroVersion.UBUNTU_MAVERICK: ['libgtk2.0-dev'],
@@ -87,7 +87,7 @@ class RedHatBootstrapper (UnixBootstrapper):
                 'alsa-lib-devel', 'perl-ExtUtils-MakeMaker', 'libXi-devel',
                 'perl-XML-Simple', 'gperf', 'gdk-pixbuf2-devel', 'wget',
                 'docbook-utils-pdf', 'glib-networking', 'help2man','glib2-devel',
-                'libXrandr-devel', 'libbonobo-devel']
+                'libXrandr-devel', 'libbonobo-devel', 'chrpath']
 
     def __init__(self, config):
         UnixBootstrapper.__init__(self, config)

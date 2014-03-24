@@ -36,9 +36,14 @@ class Packager (object):
     def __new__(klass, config, package, store):
         d = config.target_distro
         v = config.target_distro_version
+        package_target_version = config.package_target_version
 
         if d not in _packagers:
             raise FatalError(_("No packager available for the distro %s" % d))
+
+        if package_target_version is not None:
+            v = package_target_version
+
         if v not in _packagers[d]:
             # Be tolerant with the distro version
             m.warning(_("No specific packager available for the distro "
