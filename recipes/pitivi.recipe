@@ -2,7 +2,7 @@
 
 class Recipe(recipe.Recipe):
     name = 'pitivi'
-    version = '0.90.2'
+    version = '0.93'
     licenses = [License.GPLv2Plus]
     remotes = {'origin': 'git://git.gnome.org/pitivi'}
     config_sh = 'sh ./autogen.sh --noconfigure && ./configure'
