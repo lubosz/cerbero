@@ -39,9 +39,20 @@ export GTK_PATH=${APPDIR}/lib/gtk-3.0
 export GTK_DATA_PREFIX=${APPDIR}
 export GTK_THEME=Adwaita
 # GStreamer environment variables
+export GST_REGISTRY=HOME}/.cache/gstreamer-1.0/%(appname)s-bundle-registry
 export GST_PLUGIN_SCANNER=${APPDIR}/libexec/gstreamer-1.0/gst-plugin-scanner
 export GST_PLUGIN_SYSTEM_PATH=
-export GST_PLUGIN_PATH=${APPDIR}/lib/gstreamer-1.0/
+
+# Try to discover plugins only once
+PLUGINS_SYMLINK=${HOME}/.cache/gstreamer-1.0/%(appname)s-gstplugins
+ln -s ${APPDIR}/lib/gstreamer-1.0/ ${PLUGINS_SYMLINK}
+if [ $? -ne 0 ]; then
+    export GST_PLUGIN_PATH=${APPDIR}/lib/gstreamer-1.0/
+else
+    export GST_PLUGIN_PATH=${PLUGINS_SYMLINK}
+fi
+
+export GST_REGISTRY=${HOME}/.cache/gstreamer-1.0/%(appname)s-bundle-registry
 # Python
 export PYTHONPATH=${APPDIR}/%(py_prefix)s/site-packages${PYTHONPATH:+:$PYTHONPATH}
 export GI_TYPELIB_PATH=${APPDIR}/lib/girepository-1.0
@@ -58,6 +69,9 @@ else
     # Run a shell in test mode
     bash;
 fi
+
+# Cleaning up the link to gstplugins
+rm ${PLUGINS_SYMLINK}
 """
 
 class Bundler(PackagerBase):
@@ -146,7 +160,8 @@ class Bundler(PackagerBase):
 
         f.write(APPRUN_TPL % {"prefix": self.tmp_install_dir,
                               "executable_path": self.package.executable_path,
-                              "appname": self.package.name})
+                              "appname": self.package.name,
+                              "py_prefix": self.config.py_prefix})
         f.close()
         shell.call("chmod +x %s" % filepath)
 
