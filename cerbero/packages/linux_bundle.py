@@ -74,7 +74,7 @@ fi
 rm ${PLUGINS_SYMLINK}
 """
 
-class Bundler(PackagerBase):
+class LinuxBundler(PackagerBase):
     doc = N_('Bundle after building packages')
     name = 'bundle'
 
