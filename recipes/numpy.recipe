@@ -5,7 +5,7 @@ class Recipe(recipe.Recipe):
     name = 'numpy'
     version = '1.8.0'
     stype = SourceType.TARBALL
-    url = 'http://downloads.sourceforge.net/project/numpy/NumPy/1.8.0/numpy-1.8.0.tar.gz'
+    url = 'http://downloads.sourceforge.net/project/numpy/NumPy/1.8.0/numpy-%(version)s.tar.gz'
     licenses = [License.BSD]
     deps = []
 
