@@ -1,0 +1,20 @@
+# -*- Mode: Python -*- vi:si:et:sw=4:sts=4:ts=4:syntax=python
+
+
+class Recipe(recipe.Recipe):
+    name = 'Python'
+    version = '3.3.5'
+    stype = SourceType.TARBALL
+    url = 'https://www.python.org/ftp/python/%(version)s/Python-%(version)s.tar.xz'
+    # Python Software Foundation License
+    licenses = [License.BSD_like]
+    deps = ['libffi', 'sqlite']
+    configure_options = '--enable-loadable-sqlite-extensions --enable-shared '
+
+    def post_install(self):
+        # Make sure it is the default python in our environment
+        try:
+            os.symlink(os.path.join(self.config.prefix, "bin", "python3"),
+                       os.path.join(self.config.prefix, "bin", "python"))
+        except OSError:
+            pass
