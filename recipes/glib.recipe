@@ -35,6 +35,7 @@ class Recipe(recipe.Recipe):
                'glib/0001-configure-fix-link-with-Carbon-framework.patch',
                'glib/0001-osx-fix-compiler-error-with-newer-clang.patch',
                'glib/0001-Don-t-leak-GTasks-when-calling-g_task_return_error_i.patch',
+               'glib/0001-gdbus-codgen-Use-a-proper-shebang-in-the-generator.patch',
     ]
 
     files_libs = [
