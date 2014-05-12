@@ -11,7 +11,7 @@ class Recipe(recipe.Recipe):
     deps = ['gstreamer-1.0', 'gst-plugins-base-1.0', 'bzip2', 'libass',
             'faad2', 'libkate', 'zlib', 'opus', 'nettle', 'librtmp',
             'schroedinger', 'libdca', 'libmms', 'libdvdnav', 'soundtouch',
-            'vo-aacenc','librsvg' ]
+            'vo-aacenc']
 
     files_lang = ['gst-plugins-bad-1.0']
 
@@ -171,6 +171,8 @@ class Recipe(recipe.Recipe):
         self.append_env['CPPFLAGS'] = " -Wno-error "
         if self.config.target_platform != Platform.LINUX:
             self.configure_options += '--disable-gtk-doc '
+        else:
+            self.deps.append('librsvg')
         if self.config.target_platform == Platform.WINDOWS:
             self.configure_options += \
                 ' --disable-cog --disable-sdl '\
