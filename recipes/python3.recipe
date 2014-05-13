@@ -46,23 +46,43 @@ class Recipe(recipe.Recipe):
         print("BUild stuff")
 
     def install(self):
-        python_dir = os.path.join(self.config.prefix,"Python-3.4.0")
-        print("Installing", self.build_dir, "to", python_dir)
-        #copy all of python to / or "dist"
-        if os.path.exists(python_dir):
-            shutil.rmtree(python_dir)
-        shutil.copytree(self.build_dir, python_dir)
+        shutil.copy(
+            os.path.join(self.build_dir, "python.exe"), 
+            os.path.join(self.config.prefix, "bin", "python.exe"))
+        shutil.copy(
+            os.path.join(self.build_dir, "python.exe"), 
+            os.path.join(self.config.prefix, "bin", "python3.exe"))
+        shutil.copy(
+            os.path.join(self.build_dir, "python34.dll"), 
+            os.path.join(self.config.prefix, "bin", "python34.dll"))
+
+
+        target_include_dir = os.path.join(self.config.prefix, "include", "python3.4m")
+
+        if os.path.exists(target_include_dir):
+            shutil.rmtree(target_include_dir)
+
+        shutil.copytree(
+            os.path.join(self.build_dir, "include"), 
+            target_include_dir)
+        
+        target_lib_dir = os.path.join(self.config.prefix, "lib", "python3.4")
+
+        if os.path.exists(target_lib_dir):
+            shutil.rmtree(target_lib_dir)
+
+        shutil.copytree(
+            os.path.join(self.build_dir, "Lib"), 
+            target_lib_dir)
+        shutil.copytree(
+            os.path.join(self.build_dir, "libs"), 
+            os.path.join(self.config.prefix, "lib", "python3.4", "lib-dynload"))
 
     def post_install(self):
 
         if self.config.target_platform == Platform.WINDOWS:
             print("Post install windows")
-            shutil.move(
-                os.path.join(self.config.prefix, "Python-3.4.0", "python.exe"), 
-                os.path.join(self.config.prefix, "bin", "python3.exe"))
-            shutil.move(
-                os.path.join(self.config.prefix, "Python-3.4.0", "python34.dll"), 
-                os.path.join(self.config.prefix, "bin", "python34.dll"))
+
             return
 
         # Make sure it is the default python in our environment
