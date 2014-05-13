@@ -44,47 +44,6 @@ LOGFILE = None  # open('/tmp/cerbero.log', 'w+')
 DRY_RUN = False
 
 
-def set_logfile_output(location):
-    '''
-    Sets a file to log
-
-    @param location: path for the log file
-    @type location: str
-    '''
-
-    global LOGFILE
-    if not LOGFILE is None:
-        raise Exception("Logfile was already open. Forgot to call "
-                        "close_logfile_output() ?")
-    LOGFILE = open(location, "w+")
-
-
-def close_logfile_output(dump=False):
-    '''
-    Close the current log file
-
-    @param dump: dump the log file to stdout
-    @type dump: bool
-    '''
-    global LOGFILE
-    if LOGFILE is None:
-        raise Exception("No logfile was open")
-    if dump:
-        LOGFILE.seek(0)
-        while True:
-            data = LOGFILE.read()
-            if data:
-                print data
-            else:
-                break
-    # if logfile is empty, remove it
-    pos = LOGFILE.tell()
-    LOGFILE.close()
-    if pos == 0:
-        os.remove(LOGFILE.name)
-    LOGFILE = None
-
-
 class StdOut:
 
     def __init__(self, stream=sys.stdout):
@@ -120,10 +79,7 @@ def call(cmd, cmd_dir='.', fail=True):
     @type fail: bool
     '''
     try:
-        if not LOGFILE is None:
-            LOGFILE.write("Running command '%s'\n" % cmd)
-        else:
-            m.message("Running command '%s'" % cmd)
+        m.message("Running command '%s'" % cmd)
         shell = True
         if PLATFORM == Platform.WINDOWS:
             # windows do not understand ./
@@ -229,13 +185,9 @@ def download(url, destination=None, recursive=False, check_cert=True):
         cmd += " --no-check-certificate"
 
     if not recursive and os.path.exists(destination):
-        if LOGFILE is None:
-            logging.info("File %s already downloaded." % destination)
+        logging.info("File %s already downloaded." % destination)
     else:
-        if LOGFILE:
-            LOGFILE.write("Downloading %s\n" % url)
-        else:
-            logging.info("Downloading %s", url)
+        logging.info("Downloading %s", url)
         try:
             call(cmd, path)
         except FatalError, e:

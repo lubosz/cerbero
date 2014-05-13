@@ -43,7 +43,6 @@ class Wipe(Command):
         to_remove = [os.path.join(config.home_dir, config.cache_file)]
         to_remove.append(config.prefix)
         to_remove.append(config.sources)
-        to_remove.append(config.logs)
         if (args.build_tools):
             to_remove.append(os.path.join(config.home_dir, config.build_tools_cache))
             to_remove.append(config.build_tools_prefix)
