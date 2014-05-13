@@ -1,17 +1,70 @@
 # -*- Mode: Python -*- vi:si:et:sw=4:sts=4:ts=4:syntax=python
 
+import shutil
 
 class Recipe(recipe.Recipe):
     name = 'Python'
-    version = '3.3.5'
+    #version = '3.3.5'
+    version = '3.4.0'
     stype = SourceType.TARBALL
-    url = 'https://www.python.org/ftp/python/%(version)s/Python-%(version)s.tar.xz'
+    #url = 'https://www.python.org/ftp/python/%(version)s/Python-%(version)s.tar.xz'
+    url = 'https://www.python.org/ftp/python/3.4.0/python-3.4.0.amd64.msi'
     # Python Software Foundation License
     licenses = [License.BSD_like]
     deps = ['libffi', 'sqlite']
     configure_options = '--enable-loadable-sqlite-extensions --enable-shared '
 
+    def extract(self):
+        print("Extracting MSI")
+
+        #if os.path.exists(self.build_dir):
+        #    shutil.rmtree(self.build_dir)
+        
+        if not os.path.exists(self.build_dir):
+            os.makedirs(self.build_dir)
+
+        pythonDest = self.build_dir.replace("/", "\\")
+        fileName = self.download_path.split("/")[-1]
+        downloadDirectory = self.download_path.replace(fileName, "")
+        
+        extract_command = 'msiexec.exe /a %s TARGETDIR=%s /q /log msiexec.log' % (fileName, pythonDest)
+        
+        bat_path = os.path.join(downloadDirectory, "extract.bat")
+
+        bat_file = open(bat_path, "w")
+        bat_file.write(extract_command)
+        bat_file.close()
+        shell.call("cd %s && cmd //c extract.bat" % downloadDirectory)
+
+        if self.config.target_platform != Platform.WINDOWS:
+            super(recipe.Recipe, self).extract()
+
+    def configure(self):
+        print("Configuring stuff")
+
+    def compile(self):
+        print("BUild stuff")
+
+    def install(self):
+        python_dir = os.path.join(self.config.prefix,"Python-3.4.0")
+        print("Installing", self.build_dir, "to", python_dir)
+        #copy all of python to / or "dist"
+        if os.path.exists(python_dir):
+            shutil.rmtree(python_dir)
+        shutil.copytree(self.build_dir, python_dir)
+
     def post_install(self):
+
+        if self.config.target_platform == Platform.WINDOWS:
+            print("Post install windows")
+            shutil.move(
+                os.path.join(self.config.prefix, "Python-3.4.0", "python.exe"), 
+                os.path.join(self.config.prefix, "bin", "python3.exe"))
+            shutil.move(
+                os.path.join(self.config.prefix, "Python-3.4.0", "python34.dll"), 
+                os.path.join(self.config.prefix, "bin", "python34.dll"))
+            return
+
         # Make sure it is the default python in our environment
         try:
             os.symlink(os.path.join(self.config.prefix, "bin", "python3"),
