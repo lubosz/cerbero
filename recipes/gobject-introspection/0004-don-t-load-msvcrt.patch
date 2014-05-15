@@ -1,0 +1,25 @@
+From 0f07f431a6bf74f25285d7b084286f2342e0ef09 Mon Sep 17 00:00:00 2001
+From: Lubosz Sarnecki <lubosz@gmail.com>
+Date: Thu, 15 May 2014 14:14:28 +0200
+Subject: [PATCH 4/5] don't load msvcrt
+
+---
+ giscanner/giscannermodule.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/giscanner/giscannermodule.c b/giscanner/giscannermodule.c
+index b951227..d5ca5dc 100644
+--- a/giscanner/giscannermodule.c
++++ b/giscanner/giscannermodule.c
+@@ -454,7 +454,7 @@ pygi_source_scanner_parse_file (PyGISourceScanner *self,
+ #endif
+ #endif
+ 
+-#ifndef MSVC_USE_FD_DIRECTLY
++#if !defined(MSVC_USE_FD_DIRECTLY) && !defined(__MINGW64_VERSION_MAJOR)
+   {
+ #if defined(PY_MAJOR_VERSION) && PY_MAJOR_VERSION==2 && PY_MINOR_VERSION==5
+ #define PYTHON_MSVCRXX_DLL "msvcr71.dll"
+-- 
+1.8.4.msysgit.0
+

@@ -1,0 +1,264 @@
+From 0b380cf293254eaca9479f53fdd4a3872b8777f7 Mon Sep 17 00:00:00 2001
+From: Lubosz Sarnecki <lubosz@gmail.com>
+Date: Thu, 15 May 2014 14:10:03 +0200
+Subject: [PATCH 1/5] mingw: fix runtime prefix
+
+---
+ Makefile-tools.am                                  |  2 +-
+ .../Regress-1.0-C-expected/Regress.Intset.page     | 33 +++-------------
+ tools/g-ir-annotation-tool.in                      | 45 +++++++++++++++++++++-
+ tools/g-ir-doc-tool.in                             | 45 +++++++++++++++++++++-
+ tools/g-ir-scanner.in                              | 45 +++++++++++++++++++++-
+ 5 files changed, 136 insertions(+), 34 deletions(-)
+
+diff --git a/Makefile-tools.am b/Makefile-tools.am
+index 34d2a25..4fac3f5 100644
+--- a/Makefile-tools.am
++++ b/Makefile-tools.am
+@@ -10,7 +10,7 @@ EXTRA_DIST += 				\
+ 	tools/g-ir-annotation-tool.in	\
+ 	tools/g-ir-doc-tool.in
+ 
+-TOOL_SUBSTITUTIONS = sed -e s,@libdir\@,$(libdir), -e s,@datarootdir\@,$(datarootdir), -e s,@PYTHON\@,$(PYTHON),
++TOOL_SUBSTITUTIONS = sed -e s,@libdir\@,$(libdir), -e s,@datarootdir\@,$(datarootdir), -e s,@PYTHON\@,$(PYTHON), -e s,@prefix\@,$(prefix),
+ 
+ g-ir-scanner: tools/g-ir-scanner.in _giscanner.la Makefile
+ 	$(AM_V_GEN) $(TOOL_SUBSTITUTIONS) $< > $@.tmp && mv $@.tmp $@
+diff --git a/tests/scanner/Regress-1.0-C-expected/Regress.Intset.page b/tests/scanner/Regress-1.0-C-expected/Regress.Intset.page
+index 69d8300..b8324f8 100644
+--- a/tests/scanner/Regress-1.0-C-expected/Regress.Intset.page
++++ b/tests/scanner/Regress-1.0-C-expected/Regress.Intset.page
+@@ -1,35 +1,14 @@
+ <?xml version="1.0"?>
+-<page id="Regress.Intset"
+-      type="guide"
+-      style="class"
++<page id="Regress.IntSet"
++      type="topic"
++      style="default"
+       xmlns="http://projectmallard.org/1.0/"
+       xmlns:api="http://projectmallard.org/experimental/api/"
+       xmlns:ui="http://projectmallard.org/1.0/ui/">
+   <info>
+-    <link xref="index" group="class" type="guide"/>
++    <link xref="index" group="default" type="guide"/>
+   </info>
+-  <title>Regress.Intset</title>
+-  <p>Like telepathy-glib's TpIntset.</p>
++  <title>Regress.IntSet</title>
++  <p>Compatibility typedef, like telepathy-glib's TpIntSet</p>
+ 
+-  <links type="topic" ui:expanded="true"
+-         api:type="function" api:mime="text/x-csrc"
+-         groups="constructor" style="linklist">
+-    <title>Constructors</title>
+-  </links>
+-  <links type="topic" ui:expanded="true"
+-         api:type="function" api:mime="text/x-csrc"
+-         groups="method" style="linklist">
+-    <title>Methods</title>
+-  </links>
+-  <links type="topic" ui:expanded="true"
+-         api:type="function" api:mime="text/x-csrc"
+-         groups="function" style="linklist">
+-    <title>Static Functions</title>
+-  </links>
+-  <links type="topic" ui:expanded="true" groups="field" style="linklist">
+-    <title>Fields</title>
+-  </links>
+-  <links type="topic" ui:expanded="true" groups="#first #default #last" style="linklist">
+-    <title>Other</title>
+-  </links>
+ </page>
+diff --git a/tools/g-ir-annotation-tool.in b/tools/g-ir-annotation-tool.in
+index 5668cbe..7794dcc 100755
+--- a/tools/g-ir-annotation-tool.in
++++ b/tools/g-ir-annotation-tool.in
+@@ -23,7 +23,48 @@ import os
+ import sys
+ import __builtin__
+ 
+-__builtin__.__dict__['DATADIR'] = "@datarootdir@"
++prefix = "@prefix@"
++datarootdir = "@datarootdir@"
++libdir = "@libdir@"
++
++def pathtolist (path):
++  dirs = []
++
++  while True:
++    path, dir = os.path.split (path)
++
++    if dir != "":
++      dirs.append (dir)
++    else:
++      if path != "":
++        dirs.append (path)
++      break
++
++  dirs.reverse ()
++  return dirs
++
++def getroot ():
++  if os.name != 'nt':
++    return prefix
++
++  full_script_file_name = os.path.abspath (sys.argv[0])
++  dirs = pathtolist (full_script_file_name)[:-1]
++
++  found = False
++  for i, dir in reversed (list (enumerate (dirs))):
++    if dir in ['bin', 'lib', 'share', 'libexec', 'var', 'sbin', 'lib64', 'lib32', 'etc']:
++      return os.path.join (*dirs[:i])
++ 
++  return os.path.join (*dirs)
++
++runtime_prefix = getroot ()
++
++if datarootdir.startswith (prefix):
++  datarootdir = runtime_prefix + datarootdir[len (prefix):]
++if libdir.startswith (prefix):
++  libdir = runtime_prefix + libdir[len (prefix):]
++
++__builtin__.__dict__['DATADIR'] = datarootdir
+ 
+ if 'GI_SCANNER_DEBUG' in os.environ:
+     def on_exception(exctype, value, tb):
+@@ -38,7 +79,7 @@ if srcdir is not None:
+ else:
+     # This is a private directory, we don't want to pollute the global
+     # namespace.
+-    path = os.path.join('@libdir@', 'gobject-introspection')
++    path = os.path.join(libdir, 'gobject-introspection')
+ sys.path.insert(0, path)
+ 
+ from giscanner.annotationmain import annotation_main
+diff --git a/tools/g-ir-doc-tool.in b/tools/g-ir-doc-tool.in
+index 4a84afa..27403c4 100644
+--- a/tools/g-ir-doc-tool.in
++++ b/tools/g-ir-doc-tool.in
+@@ -23,7 +23,48 @@ import os
+ import sys
+ import __builtin__
+ 
+-__builtin__.__dict__['DATADIR'] = "@datarootdir@"
++prefix = "@prefix@"
++datarootdir = "@datarootdir@"
++libdir = "@libdir@"
++
++def pathtolist (path):
++  dirs = []
++
++  while True:
++    path, dir = os.path.split (path)
++
++    if dir != "":
++      dirs.append (dir)
++    else:
++      if path != "":
++        dirs.append (path)
++      break
++
++  dirs.reverse ()
++  return dirs
++
++def getroot ():
++  if os.name != 'nt':
++    return prefix
++
++  full_script_file_name = os.path.abspath (sys.argv[0])
++  dirs = pathtolist (full_script_file_name)[:-1]
++
++  found = False
++  for i, dir in reversed (list (enumerate (dirs))):
++    if dir in ['bin', 'lib', 'share', 'libexec', 'var', 'sbin', 'lib64', 'lib32', 'etc']:
++      return os.path.join (*dirs[:i])
++ 
++  return os.path.join (*dirs)
++
++runtime_prefix = getroot ()
++
++if datarootdir.startswith (prefix):
++  datarootdir = runtime_prefix + datarootdir[len (prefix):]
++if libdir.startswith (prefix):
++  libdir = runtime_prefix + libdir[len (prefix):]
++
++__builtin__.__dict__['DATADIR'] = datarootdir
+ 
+ if 'GI_SCANNER_DEBUG' in os.environ:
+     def on_exception(exctype, value, tb):
+@@ -38,7 +79,7 @@ if srcdir is not None:
+ else:
+     # This is a private directory, we don't want to pollute the global
+     # namespace.
+-    path = os.path.join('@libdir@', 'gobject-introspection')
++    path = os.path.join(libdir, 'gobject-introspection')
+ sys.path.insert(0, path)
+ 
+ from giscanner.docmain import doc_main
+diff --git a/tools/g-ir-scanner.in b/tools/g-ir-scanner.in
+index f709683..94d71e7 100755
+--- a/tools/g-ir-scanner.in
++++ b/tools/g-ir-scanner.in
+@@ -23,7 +23,48 @@ import os
+ import sys
+ import __builtin__
+ 
+-__builtin__.__dict__['DATADIR'] = "@datarootdir@"
++prefix = "@prefix@"
++datarootdir = "@datarootdir@"
++libdir = "@libdir@"
++
++def pathtolist (path):
++  dirs = []
++
++  while True:
++    path, dir = os.path.split (path)
++
++    if dir != "":
++      dirs.append (dir)
++    else:
++      if path != "":
++        dirs.append (path)
++      break
++
++  dirs.reverse ()
++  return dirs
++
++def getroot ():
++  if os.name != 'nt':
++    return prefix
++
++  full_script_file_name = os.path.abspath (sys.argv[0])
++  dirs = pathtolist (full_script_file_name)[:-1]
++
++  found = False
++  for i, dir in reversed (list (enumerate (dirs))):
++    if dir in ['bin', 'lib', 'share', 'libexec', 'var', 'sbin', 'lib64', 'lib32', 'etc']:
++      return os.path.join (*dirs[:i])
++ 
++  return os.path.join (*dirs)
++
++runtime_prefix = getroot ()
++
++if datarootdir.startswith (prefix):
++  datarootdir = runtime_prefix + datarootdir[len (prefix):]
++if libdir.startswith (prefix):
++  libdir = runtime_prefix + libdir[len (prefix):]
++
++__builtin__.__dict__['DATADIR'] = datarootdir
+ 
+ if 'GI_SCANNER_DEBUG' in os.environ:
+     def on_exception(exctype, value, tb):
+@@ -38,7 +79,7 @@ if srcdir is not None:
+ else:
+     # This is a private directory, we don't want to pollute the global
+     # namespace.
+-    path = os.path.join('@libdir@', 'gobject-introspection')
++    path = os.path.join(libdir, 'gobject-introspection')
+ sys.path.insert(0, path)
+ 
+ from giscanner.scannermain import scanner_main
+-- 
+1.8.4.msysgit.0
+

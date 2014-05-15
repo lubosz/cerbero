@@ -1,0 +1,40 @@
+From 54116aaa6bf1df5825b7dcc437c0b44dfc6d99ea Mon Sep 17 00:00:00 2001
+From: Lubosz Sarnecki <lubosz@gmail.com>
+Date: Thu, 15 May 2014 14:11:21 +0200
+Subject: [PATCH 2/5] mingw: debug rmtree errors
+
+---
+ giscanner/gdumpparser.py | 10 +++++++++-
+ 1 file changed, 9 insertions(+), 1 deletion(-)
+
+diff --git a/giscanner/gdumpparser.py b/giscanner/gdumpparser.py
+index e1fc935..8da4d2b 100644
+--- a/giscanner/gdumpparser.py
++++ b/giscanner/gdumpparser.py
+@@ -23,6 +23,7 @@ import sys
+ import tempfile
+ import shutil
+ import subprocess
++import time
+ from xml.etree.cElementTree import parse
+ 
+ from . import ast
+@@ -171,7 +172,14 @@ blob containing data gleaned from GObject's primitive introspection."""
+             return parse(out_path)
+         finally:
+             if not utils.have_debug_flag('save-temps'):
+-                shutil.rmtree(self._binary.tmpdir)
++                def rmtree_onerror (func, path, exinfo):
++                    time.sleep (1)
++                    try:
++                      func (path)
++                    except:
++                      raise
++
++                shutil.rmtree(self._binary.tmpdir, False, rmtree_onerror)
+ 
+     # Parser
+ 
+-- 
+1.8.4.msysgit.0
+
