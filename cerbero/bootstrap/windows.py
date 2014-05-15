@@ -70,7 +70,7 @@ class WindowsBootstrapper(BootstrapperBase):
         if self.platform == Platform.WINDOWS:
             # After mingw is beeing installed
             self.install_bin_deps()
-        #self.install_python_sdk()
+        self.install_python_sdk()
 
     def check_dirs(self):
         if not os.path.exists(self.prefix):
