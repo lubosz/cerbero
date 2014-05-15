@@ -54,4 +54,5 @@ class Recipe(recipe.Recipe):
             # cerbero is python2 only, same as gobject-introspection,
             # make sure gobject-introspection is built against the same interpretter
             # as we are
-            self.config_sh = "PYTHON=%s %s" %(sys.executable, self.config_sh)
+
+            self.config_sh = "PYTHON=python2 %s" % self.config_sh
