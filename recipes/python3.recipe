@@ -55,7 +55,12 @@ class Recipe(recipe.Recipe):
         shutil.copy(
             os.path.join(self.build_dir, "python34.dll"), 
             os.path.join(self.config.prefix, "bin", "python34.dll"))
-
+        shutil.copy(
+            os.path.join(self.build_dir, "python34.dll"), 
+            os.path.join(self.config.prefix, "lib", "python.dll"))
+        shutil.copy(
+            os.path.join(self.build_dir, "python34.dll"), 
+            os.path.join(self.config.prefix, "lib", "python34.dll"))
 
         target_include_dir = os.path.join(self.config.prefix, "include", "python3.4m")
 
