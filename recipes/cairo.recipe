@@ -37,6 +37,10 @@ class Recipe(recipe.Recipe):
     make_check = None
 
     def prepare(self):
+        self.append_env['CFLAGS'] = " -fno-lto "
+        self.append_env['CXXFLAGS'] = " -fno-lto "
+        self.append_env['CPPFLAGS'] = " -fno-lto "
+
         if self.config.variants.x11:
             self.files_devel += ['lib/pkgconfig/cairo-xlib-xrender.pc',
                                  'lib/pkgconfig/cairo-xlib.pc']
