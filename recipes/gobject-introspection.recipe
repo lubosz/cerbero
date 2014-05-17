@@ -94,5 +94,5 @@ class Recipe(recipe.Recipe):
             # make sure gobject-introspection is built against the same interpretter
             # as we are
 
-            self.config_sh = "PYTHON=python2 %s" % self.config_sh
+            self.config_sh = "PYTHON=/usr/bin/python2 %s" % self.config_sh
 
