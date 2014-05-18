@@ -2,7 +2,7 @@
 
 class Recipe(recipe.Recipe):
     name = 'clutter-gtk'
-    version = '1.4.4'
+    version = '1.5.2'
     # TODO: check license - source files are LGPLv2+ and COPYING is LGPLv2.1
     licenses = [License.LGPLv2_1Plus]
     deps = ['clutter', 'gtk+3']
@@ -10,7 +10,7 @@ class Recipe(recipe.Recipe):
     autoreconf = True
 
     stype = SourceType.TARBALL
-    url = 'http://ftp.acc.umu.se/pub/GNOME/sources/clutter-gtk/1.4/clutter-gtk-1.4.4.tar.xz'
+    url = 'http://ftp.acc.umu.se/pub/GNOME/sources/clutter-gtk/1.5/clutter-gtk-1.5.2.tar.xz'
 
     files_libs = ['libclutter-gtk-1.0']
     files_devel = ['include/clutter-gtk-1.0', 'lib/pkgconfig/clutter-gtk-1.0.pc']

@@ -2,14 +2,14 @@
 
 class Recipe(recipe.Recipe):
     name = 'cogl'
-    version = '1.16.0'
+    version = '1.18.0'
     # TODO: check license - source files are LGPLv2+ and COPYING is LGPLv2.1
     licenses = [License.LGPLv2_1Plus]
     use_system_libs = True
     deps = [ 'pango', 'gdk-pixbuf' ]
 
     stype = SourceType.TARBALL
-    url = 'http://ftp.acc.umu.se/pub/GNOME/sources/cogl/1.16/cogl-1.16.0.tar.xz'
+    url = 'http://ftp.acc.umu.se/pub/GNOME/sources/cogl/1.18/cogl-1.18.0.tar.xz'
 
     files_libs = ['libcogl', 'libcogl-pango']
     files_devel = [
