@@ -1,0 +1,32 @@
+# -*- Mode: Python -*- vi:si:et:sw=4:sts=4:ts=4:syntax=python
+
+
+class Recipe(recipe.Recipe):
+    name = 'clutter-crash'
+    version = '1.0'
+    licenses = [License.LGPLv3]
+    deps = ['clutter-gtk', 'clutter-gst']
+    #use_system_libs = True
+
+    stype = SourceType.TARBALL
+    url = 'https://bug727851.bugzilla-attachments.gnome.org/attachment.cgi?id=273831'
+    tarball_dirname = 'clutter-crash'
+
+    def fetch(self):
+        pass
+        
+    def extract(self):
+        pass
+
+    def configure(self):
+        pass
+        
+    def compile(self):
+        pass
+        
+    def install(self):
+        pass
+        #shell.call("wget https://bug727851.bugzilla-attachments.gnome.org/attachment.cgi?id=273831 -O clutter-crash.py")
+        #shutil.copy(
+        #    os.path.join(self.build_dir, "clutter-crash.py"), 
+        #    os.path.join(self.config.prefix, "bin", "clutter-crash.py"))pass
