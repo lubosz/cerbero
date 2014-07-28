@@ -1,11 +1,12 @@
 # -*- Mode: Python -*- vi:si:et:sw=4:sts=4:ts=4:syntax=python
 
+import shutil
 
 class Recipe(recipe.Recipe):
     name = 'Python'
     version = '3.3.5'
     stype = SourceType.TARBALL
-    url = 'https://www.python.org/ftp/python/%(version)s/Python-%(version)s.tar.xz'
+    url = ""
     # Python Software Foundation License
     licenses = [License.BSD_like]
     deps = ['libffi', 'sqlite']
@@ -796,7 +797,66 @@ class Recipe(recipe.Recipe):
         if not self.config.variants.python3:
             raise InvalidRecipeError(self, "The variant python3 is not enabled")
 
+        url_prefix = 'https://www.python.org/ftp/python/%(self.version)s/'
+        if self.config.target_platform != Platform.WINDOWS:
+            self.url = url_prefix + "Python-%(self.version)s.tar.xz"
+        else:
+            self.url = url_prefix + "python-%(self.version)s.amd64.msi"
+
+    def extract(self):
+        if self.config.target_platform != Platform.WINDOWS:
+            super(recipe.Recipe, self).extract()
+        else:
+            # extract msi
+            if not os.path.exists(self.build_dir):
+                os.makedirs(self.build_dir)
+
+            destination = self.build_dir.replace("/", "\\")
+            msi_file = self.download_path.split("/")[-1]
+            extract_tpl = 'msiexec.exe /a %s TARGETDIR=%s /q /log msiexec.log'
+            extract_command = extract_tpl % (msi_file, destination)
+            download_path = self.download_path.replace(msi_file, "")
+            bat_path = os.path.join(download_path, "extract.bat")
+            bat_file = open(bat_path, "w")
+            bat_file.write(extract_command)
+            bat_file.close()
+            shell.call("cd %s && cmd //c extract.bat" % download_path)
+
+    def configure(self):
+        if self.config.target_platform != Platform.WINDOWS:
+            super(recipe.Recipe, self).configure()
+
+    def compile(self):
+        if self.config.target_platform != Platform.WINDOWS:
+            super(recipe.Recipe, self).compile()
+
+    def install_file(self, file, target):
+        shutil.copy(
+            os.path.join(self.build_dir, file),
+            os.path.join(self.config.prefix, *target))
+
+    def install_dir(source, target):
+        if os.path.exists(target):
+            shutil.rmtree(target)
+
+        shutil.copytree(
+            os.path.join(self.build_dir, source),
+            os.path.join(self.config.prefix, *target))
+
+    def install(self):
+        self.install_file("python.exe", ["bin", "python.exe"])
+        self.install_file("python.exe", ["bin", "python3.exe"])
+        self.install_file("python33.dll", ["bin", "python33.dll"])
+        self.install_file("python33.dll", ["lib", "python.dll"])
+        self.install_file("python33.dll", ["lib", "python33.dll"])
+        self.install_dir("include", ["include", "python3.3m"])
+        self.install_dir("Lib", ["lib", "python3.3"])
+        self.install_dir("libs", ["lib", "python3.3", "lib-dynload"])
+
     def post_install(self):
+        if self.config.target_platform == Platform.WINDOWS:
+            return
+
         # Make sure it is the default python in our environment
         try:
             os.symlink(os.path.join(self.config.prefix, "bin", "python3"),
