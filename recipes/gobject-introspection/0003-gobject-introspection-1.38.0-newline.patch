@@ -1,0 +1,76 @@
+From a22d5172dcbb3a83e9db51c00fc82eeb1661690e Mon Sep 17 00:00:00 2001
+From: Lubosz Sarnecki <lubosz@gmail.com>
+Date: Thu, 15 May 2014 14:14:05 +0200
+Subject: [PATCH 3/5] gobject-introspection-1.38.0-newline
+
+---
+ giscanner/scannerlexer.l   |  8 +++++++-
+ giscanner/sourcescanner.py | 20 +++++++-------------
+ 2 files changed, 14 insertions(+), 14 deletions(-)
+
+diff --git a/giscanner/scannerlexer.l b/giscanner/scannerlexer.l
+index 941154d..fba0c18 100644
+--- a/giscanner/scannerlexer.l
++++ b/giscanner/scannerlexer.l
+@@ -275,7 +275,13 @@ parse_comment (GISourceScanner *scanner)
+     while (c2 != EOF && !(c1 == '*' && c2 == '/'))
+       {
+         if (!skip)
+-          g_string_append_c (string, c1);
++          {
++            if (c1 == '\r' && c2 == '\n')
++              /* Skip Windows line-feeds */
++              ;
++            else
++              g_string_append_c (string, c1);
++          }
+ 
+         if (c1 == '\n')
+           lineno++;
+diff --git a/giscanner/sourcescanner.py b/giscanner/sourcescanner.py
+index dab1602..757b93a 100644
+--- a/giscanner/sourcescanner.py
++++ b/giscanner/sourcescanner.py
+@@ -294,9 +294,13 @@ class SourceScanner(object):
+         cpp_args += ['-E', '-C', '-I.', '-']
+         cpp_args += self._cpp_options
+ 
++        # XXX: Use gcc's output switch instead of STDOUT, else Shell interaction
++        #      can cause mangling of line-endings (MINGW32/MSYS).
++        tmp_name = tempfile.mktemp()
++        cpp_args += ['-o', tmp_name]
++
+         proc = subprocess.Popen(cpp_args,
+-                                stdin=subprocess.PIPE,
+-                                stdout=subprocess.PIPE)
++                                stdin=subprocess.PIPE)
+ 
+         for define in defines:
+             proc.stdin.write('#ifndef %s\n' % (define, ))
+@@ -308,22 +312,12 @@ class SourceScanner(object):
+             proc.stdin.write('#include <%s>\n' % (filename, ))
+         proc.stdin.close()
+ 
+-        tmp_fd, tmp_name = tempfile.mkstemp()
+-        fp = os.fdopen(tmp_fd, 'w+b')
+-        while True:
+-            data = proc.stdout.read(4096)
+-            if data is None:
+-                break
+-            fp.write(data)
+-            if len(data) < 4096:
+-                break
+-        fp.seek(0, 0)
+-
+         assert proc, 'Proc was none'
+         proc.wait()
+         if proc.returncode != 0:
+             raise SystemExit('Error while processing the source.')
+ 
++        fp = open(tmp_name, 'r+b')
+         self._scanner.parse_file(fp.fileno())
+         fp.close()
+         os.unlink(tmp_name)
+-- 
+1.8.4.msysgit.0
+

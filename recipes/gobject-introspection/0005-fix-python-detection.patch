@@ -1,0 +1,25 @@
+From b0021a5e59a05db7c5af6d1961632358bc5adabd Mon Sep 17 00:00:00 2001
+From: Lubosz Sarnecki <lubosz@gmail.com>
+Date: Thu, 15 May 2014 14:14:42 +0200
+Subject: [PATCH 5/5] fix python detection
+
+---
+ m4/python.m4 | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/m4/python.m4 b/m4/python.m4
+index ed5559d..451fd74 100644
+--- a/m4/python.m4
++++ b/m4/python.m4
+@@ -64,7 +64,7 @@ AC_DEFUN([AM_CHECK_PYTHON_LIBS],
+ AC_MSG_CHECKING(for libraries required to link against libpython)
+ dnl deduce PYTHON_LIBS
+ if test "x$PYTHON_LIBS" = x; then
+-	PYTHON_LIBS=`$PYTHON-config --ldflags --libs`
++	PYTHON_LIBS=`$PYTHON-config --ldflags`
+ fi
+ AC_SUBST(PYTHON_LIBS)
+ dnl check if libpython exist:
+-- 
+1.8.4.msysgit.0
+

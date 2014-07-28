@@ -70,6 +70,14 @@ class Recipe(recipe.Recipe):
         'share/gobject-introspection-1.0'
     ]
 
+    patches = [
+        'gobject-introspection/0001-mingw-fix-runtime-prefix.patch',
+        'gobject-introspection/0002-mingw-debug-rmtree-errors.patch',
+        'gobject-introspection/0003-gobject-introspection-1.38.0-newline.patch',
+        'gobject-introspection/0004-don-t-load-msvcrt.patch',
+        'gobject-introspection/0005-fix-python-detection.patch'
+    ]
+
     def prepare(self):
         if self.config.variants.python3:
             # gobject-introspection needs python2
