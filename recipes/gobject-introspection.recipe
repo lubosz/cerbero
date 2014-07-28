@@ -72,10 +72,9 @@ class Recipe(recipe.Recipe):
 
     def prepare(self):
         if self.config.variants.python3:
-            # cerbero is python2 only, same as gobject-introspection,
-            # make sure gobject-introspection is built against the same interpretter
-            # as we are
-            self.config_sh = "PYTHON=%s %s" %(sys.executable, self.config_sh)
+            # gobject-introspection needs python2
+            # don't use full path since shebangs are generated from PYTHON
+            self.config_sh = "PYTHON=python2 %s" % self.config_sh
 
     # TODO: catch the share/man stuff like man1/g-ir* ?
     def configure(self):
