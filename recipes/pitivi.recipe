@@ -17,8 +17,7 @@ class Recipe(recipe.Recipe):
             'gst-transcoder',
             'numpy',
             'matplotlib',
-            'gnome-icon-theme',
-            'gnome-icon-theme-symbolic',
+            'adwaita-icon-theme',
             'shared-mime-info'] # brings in gtk+
 
     files_libs = ['libpitivi-1.0']

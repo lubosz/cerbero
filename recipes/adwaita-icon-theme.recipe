@@ -1,0 +1,17 @@
+class Recipe(recipe.Recipe):
+    name = 'adwaita-icon-theme'
+    version = '3.20'
+    licenses = [License.LGPLv2_1]
+
+    stype = SourceType.TARBALL
+    url = 'http://ftp.gnome.org/pub/GNOME/sources/%(name)s/%(version)s/%(name)s-%(version)s.tar.xz'
+    deps = ['hicolor-icon-theme', 'icon-naming-utils']
+
+    files_themes = [
+         'share/icons/Adwaita/*/*/*.png',
+    ]
+
+    files_devel = [
+         'share/pkgconfig/adwaita-icon-theme.pc',
+    ]
+
